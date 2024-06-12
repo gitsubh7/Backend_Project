@@ -1,5 +1,18 @@
 import {Router} from 'express';
 import { registerUser } from '../controllers/user.controller';
+import {upload} from '../middlewares/upload.js'
 const router = Router()
-router.route("/register").post(registerUser)
+router.route("/register").post(
+    upload.fields([
+        {
+            name:"avatar",
+            maxCount:1
+        },
+        {
+            name:"coverImage",
+            maxCount:1  
+        }
+    ]),
+    registerUser)
+
 export default router 
