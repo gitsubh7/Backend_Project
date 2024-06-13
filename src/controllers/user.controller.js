@@ -1,9 +1,10 @@
-import {asyncHandler} from '../middlewares/asyncHandler.js';
-import {ApiError} from '../errors/ApiError.js';
-import {User} from '../models/User.js';
+// import {asyncHandler} from '../middlewares/multer.middleware.js';
+// import {ApiError} from '../';
+import {User} from '../models/user.model.js';
+import { ApiError } from '../utils/Apierror.js';
 import { ApiResponse } from '../utils/Apiresponse.js';
-import {uploadOnClodinary} from '../utils/uploadOnCloudinary.js';
-const registerUser = asyncHandler(async (req,res)=>{
+import {uploadOnCloudinary} from '../utils/cloudinary.js';
+const registerUser = (async (req,res)=>{
     //get user details from frontend
     const {fullName,email,password} = req.body;
     console.log(email);
@@ -13,11 +14,12 @@ const registerUser = asyncHandler(async (req,res)=>{
         throw new ApiError(400,"Please provide email and password")
     }
     //check if user exists
-    const existedUser= User.findOne({$or: [{username},{email}]
-    });
-    if(existedUser){
-        throw new ApiError(409,"User already exists")
+    const existedUser = await User.findOne({ email });
+
+    if (existedUser) {
+        throw new ApiError(409, "User already exists");
     }
+    
     //check for images,avatar and coverImage
     const avatarLocalPath=req.files ?.avatar[0]?.path
     const coverImageLocalPath=req.files ?.coverImage[0]?.path
