@@ -12,7 +12,7 @@ const userSchema = new Schema(
             trim:true,
             index:true
         },
-        userName:{
+        email:{
             type: String,
             required: true,
             unique: true,
@@ -40,7 +40,7 @@ const userSchema = new Schema(
                 ref:"Video"
             }
         ],
-        passowrd:{
+        password:{
             type: String,
             required: [true, 'Password is required']
             

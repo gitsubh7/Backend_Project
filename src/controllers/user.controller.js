@@ -6,7 +6,7 @@ import { ApiResponse } from '../utils/Apiresponse.js';
 import {uploadOnCloudinary} from '../utils/cloudinary.js';
 const registerUser = (async (req,res)=>{
     //get user details from frontend
-    const {fullName,email,password} = req.body;
+    const {fullName,email,password,userName} = req.body;
     console.log(email);
     //validation
 
@@ -28,8 +28,8 @@ const registerUser = (async (req,res)=>{
         throw new ApiError(400,"Please provide avatar")
     }   
     //upload to cloudinary
-    const avatar= await uploadOnClodinary(avatarLocalPath)
-    const coverImage= await uploadOnClodinary(coverImageLocalPath)
+    const avatar= await uploadOnCloudinary(avatarLocalPath)
+    const coverImage= await uploadOnCloudinary(coverImageLocalPath)
 
     if(!avatar){
         throw new ApiError(400,"Error uploading avatar")
@@ -41,7 +41,7 @@ const registerUser = (async (req,res)=>{
         coverImage:coverImage?.url  || "",
         email,
         password,
-        username:username.toLowerCase()
+        userName:userName
 
     })
     //check if user created
