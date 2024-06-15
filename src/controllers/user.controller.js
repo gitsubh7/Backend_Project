@@ -22,7 +22,7 @@ const registerUser = (async (req,res)=>{
     
     //check for images,avatar and coverImage
     const avatarLocalPath=req.files ?.avatar[0]?.path
-    const coverImageLocalPath=req.files ?.coverImage[0]?.path
+    // const coverImageLocalPath=req.files ?.coverImage[0]?.path
 
     if(!avatarLocalPath){
         throw new ApiError(400,"Please provide avatar")
@@ -34,6 +34,12 @@ const registerUser = (async (req,res)=>{
     if(!avatar){
         throw new ApiError(400,"Error uploading avatar")
     }
+    let coverImageLocalPath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
+        coverImageLocalPath=req.files.coverImage[0].path;
+         
+    }
+
     //create user object and create entry in db
     const user = await User.create({
         fullName,
