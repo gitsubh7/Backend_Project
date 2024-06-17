@@ -1,7 +1,7 @@
-import {asyncHandler} from '../middlewares/asyncHandler.middleware.js'
+import {asyncHandler} from "../utils/Asynchandler.js"
 import jwt from 'jsonwebtoken'
 import {User} from '../models/user.model.js'
-import { ApiError } from '../utils/Apierror'
+import { ApiError } from '../utils/Apierror.js'
 export const verifyJWT= asyncHandler(
     async (req,_,next)=>{
         try{
@@ -20,7 +20,7 @@ export const verifyJWT= asyncHandler(
         req.user=user;
         next()
     }catch(error){  
-        throw new ApiError(401,"Unauthorized request")
+        throw new ApiError(401,error?.message || "invalid access token")
     }
 
          
