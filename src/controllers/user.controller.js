@@ -200,9 +200,9 @@ const getCurrentUser= asyncHandler(async(req,res)=>{
     .status(200)
     .json(200,req.user,"User fetched successfully")
 })
-const updateAccountDetails=asyncHandler(async(req,res)=>{
+const updateAccountDetails=asyncHandler(async(req,res)=>{   
     const {fullName,email}=req.body
-    if(!fillName || !email){
+    if(!fullName || !email){
         throw new ApiError(400,"Please provide full name and email")
     }
     const user=User.findByIdAndUpdate(
@@ -269,6 +269,48 @@ const updateCoverImage=asyncHandler(async(req,res)=>{
     )
 
 })
+
+
+const getUserChannelProfile=asyncHandler(async(req,res)=>{
+    const {userName}=req.params
+    if(!userName?.trim()){
+        throw new ApiError(400,"Please provide username")
+    }
+    const channel = await User.aggregate([
+        {
+            $match: {
+                username: username?.toLowerCase()
+            }
+        },{
+            $lookup:{
+                from :"subscriptions",
+                localField:"_id",
+                foreignField :"channel",
+                as:"subscribers"
+            }
+        },
+        {
+            $lookup:{
+                from :"subscriptions",
+                localField:"_id",
+                foreignField:"subscriber",
+                as:"subscribedTo"
+            }
+        },{
+            $addFields:{
+                subscriberCount:{$size:"$subscribers"},
+                subscribedToCount:{$size:"$subscribedTo"},
+                isSubscribed:{
+                    $cond:{
+                        if:{$in: [req.user?._id,"$subscribers.subscriber"]},
+                        then:true,
+                        else:false 
+                    }
+                }
+            }
+        }
+    ])
+})
 export {
     registerUser,
     loginUser,
@@ -278,5 +320,7 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateCoverImage
+    updateCoverImage,
+    getUserChannelProfile
+
 }
