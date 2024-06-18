@@ -270,7 +270,6 @@ const updateCoverImage=asyncHandler(async(req,res)=>{
 
 })
 
-
 const getUserChannelProfile=asyncHandler(async(req,res)=>{
     const {userName}=req.params
     if(!userName?.trim()){
@@ -308,8 +307,25 @@ const getUserChannelProfile=asyncHandler(async(req,res)=>{
                     }
                 }
             }
+        },
+        {
+            $project:{
+                fullName:1,
+                userName:1,
+                subscriberCount:1,
+                subscribedToCount:1,
+                isSubscribed:1,
+                avatar:1,
+                email:1,
+                coverImage:1
+            }
         }
     ])
+    if(!channel?.length){
+        throw new ApiError(404,"Channel not found")
+    
+    }
+    return res.status(200).json(new ApiResponse(200,channel[0],"Channel fetched successfully"))
 })
 export {
     registerUser,
